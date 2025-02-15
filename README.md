@@ -25,7 +25,7 @@ Here the dialogues are extracted from:
 https://www.kaggle.com/datasets/stefanocoretta/yoda-speech-corpus?resource=download
 
 ## Data folder structure:
-
+```
 data/                
 │── books/                        # Collection of books related to Star Wars
 │   ├── yoda-dark-rendezvous.txt   # Yoda-focused novel in plain text
@@ -39,7 +39,7 @@ data/
 │   ├── 06_return_of_the_jedi.txt  
 │
 │── yoda-corpus.csv                # Processed corpus of Yoda-related dialogues/data
-
+```
 
 ## Execute code
 ```
