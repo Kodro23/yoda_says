@@ -1,3 +1,5 @@
 ipykernel
 pypdf
 pandas
+scikit-learn
+transformers
