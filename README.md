@@ -41,9 +41,6 @@ data/
 │── yoda-corpus.csv                # Processed corpus of Yoda-related dialogues/data
 ```
 
-## Execute code
-```
-python extract_yoda_dialogues.py
-```
 # 2. Fine-tuning text generation model
+
 # 3. Create the chatbot
