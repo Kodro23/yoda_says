@@ -3,16 +3,17 @@
 import re
 import os
 from pypdf import PdfReader
-
+import pandas as pd
 
 # Specify the folder path
-folder_path = "C:/Users/Annek/Documents/semestre 1/ML avec python/YODA/yoda_says/data"
+# data_folder_path = "C:/Users/Annek/Documents/semestre 1/ML avec python/YODA/yoda_says/data"
 
-#### 1. Handling scripts
+# #### 1. Handling scripts
 
+def extract_from_scrpits(data_folder_path):
 # Load scripts
-dialogues = {}
-patterns = {
+  dialogues = {}
+  patterns = {
     "01": r"(?<=\n)([A-Z ]+)(?=:\s)(.+?)(?=(\n\s*\n|\n[A-Z ]+\n|\Z))",  # Pattern for "01" or "03"
     "03": r"(?<=\n)([A-Z ]+)(?=:\s)(.+?)(?=(\n\s*\n|\n[A-Z ]+\n|\Z))",
     "02": r"(?<=\n)([A-Z ]+)(?=\n)(.+?)(?=(\n\s*\n|\n[A-Z ]+\n|\Z))",   # Pattern for "02" and "06"
@@ -20,72 +21,83 @@ patterns = {
     "05": r"(?<=\n)([A-Z ]+)\s*(\([^)]*\))?\s*(.+?)(?=(\n\s*\n|\n[A-Z ]+\n|\Z))"  # Pattern for "05"
 }
 # Loop through all files in the folder
-for filename in os.listdir(folder_path):
-   print(filename)
-   if filename.endswith(".txt"):  # Process only .txt files
-    file_path = os.path.join(folder_path+"/scripts", filename)
-    with open(file_path, "r") as file:
-        script_text = file.read()
+  for filename in os.listdir(data_folder_path+"/scripts"):
+     print(filename)
+     if filename.endswith(".txt"):  # Process only .txt files
+        file_path = os.path.join(data_folder_path+"/scripts", filename)
+        with open(file_path, "r") as file:
+          script_text = file.read()
       # Determine which pattern to use based on the filename
-        character_dialogue_pattern = None
-        for key, pattern in patterns.items():
+          character_dialogue_pattern = None
+          for key, pattern in patterns.items():
             if key in filename:  # Check if the key is part of the filename
                character_dialogue_pattern = re.compile(pattern, re.DOTALL)
                break
 
             # Skip files without a matching pattern
             if not character_dialogue_pattern:
+                # print(f"No matching pattern for file: {filename}")
                 continue
-        for match in character_dialogue_pattern.finditer(script_text):
-          character = match.group(1).strip()
-          if "05" in filename:
-            dialogue = match.group(3).strip()
-          else:
-            dialogue = match.group(2).strip()
-          if character not in dialogues:
-            dialogues[character] = []
-          if "01" in filename or "03" in filename:
-            dialogues[character].append(dialogue.split(": ")[1].replace("\n", ""))
-          elif "05" in filename:
-            dialogues[character].append(dialogue.split(".\n")[0].split("?\n")[0].replace("\n", ""))
-          else:
-            dialogues[character].append(dialogue.replace("\n", ""))
-print(len(dialogues["YODA"]))
+          for match in character_dialogue_pattern.finditer(script_text):
+            character = match.group(1).strip()
+            if "05" in filename:
+              dialogue = match.group(3).strip()
+            else:
+              dialogue = match.group(2).strip()
+            if character not in dialogues:
+              dialogues[character] = []
+            if "01" in filename or "03" in filename:
+              dialogues[character].append(dialogue.split(": ")[1].replace("\n", ""))
+            elif "05" in filename:
+              dialogues[character].append(dialogue.split(".\n")[0].split("?\n")[0].replace("\n", ""))
+            else:
+              dialogues[character].append(dialogue.replace("\n", ""))
+  print("Number of sentences from scripts:", len(dialogues["YODA"]))
+  #Correct some dialogues
+  dialogues["YODA"][1]="Trained as a Jedi, you request for him?"
+  dialogues["YODA"][2]="Good, good, young one. How feel you?"
+  dialogues["YODA"][3]="See through you, we can."
+  dialogues["YODA"][4]="...Correct you were, Qui-Gon."
+  dialogues["YODA"][5]="An apprentice, you have, Qui-Gon. Impossible, to take on a second."
+  dialogues["YODA"][6]="Our own council we will keep on who is ready. More to learn, he has..."
+  dialogues["YODA"][7]="Young Skywalker's fate will be decided later."
+  dialogues["YODA"][8]="Confer on you, the level of Jedi Knight the Coucil does. But agreeon you taking this boy as your Padawan learner, I do not."
+  return dialogues
 
-#Correct some dialogues
-dialogues["YODA"][1]="Trained as a Jedi, you request for him?"
-dialogues["YODA"][2]="Good, good, young one. How feel you?"
-dialogues["YODA"][3]="See through you, we can."
-dialogues["YODA"][4]="...Correct you were, Qui-Gon."
-dialogues["YODA"][5]="An apprentice, you have, Qui-Gon. Impossible, to take on a second."
-dialogues["YODA"][6]="Our own council we will keep on who is ready. More to learn, he has..."
-dialogues["YODA"][7]="Young Skywalker's fate will be decided later."
-dialogues["YODA"][8]="Confer on you, the level of Jedi Knight the Coucil does. But agreeon you taking this boy as your Padawan learner, I do not."
+
+
 
 
 # #### 2. Handling books
 
 # first book
-with open(folder_path+ "/books/epdf.pub_yoda-dark-rendezvousd56673c5bd1ecce25ac520457237f52013162.txt", "r") as file:
-      book_text = file.read()
-first_dialogues=re.findall(r'\bYoda\b.*?"(.*?)"', book_text.replace("\n",""))
-yoda_dialogues_book1=first_dialogues + [dialogue for dialogue in re.findall(r'"(.*?)".*?\bYoda\b', book_text.replace("\n","")) 
+def read_yoad_dark_rendez_vous(data_folder_path):
+  with open(data_folder_path+ "/books/epdf.pub_yoda-dark-rendezvousd56673c5bd1ecce25ac520457237f52013162.txt", "r") as file:
+    book_text = file.read()
+  first_dialogues=re.findall(r'\bYoda\b.*?"(.*?)"', book_text.replace("\n",""))
+  yoda_dialogues_book1=first_dialogues + [dialogue for dialogue in re.findall(r'"(.*?)".*?\bYoda\b', book_text.replace("\n","")) 
                                                  if dialogue not in first_dialogues]
-yoda_dialogues_book1= list(filter(lambda s: s.strip(), yoda_dialogues_book1))
-print(len(yoda_dialogues_book1))
+  yoda_dialogues_book1= list(filter(lambda s: s.strip(), yoda_dialogues_book1))
+  print("Number of sentences from book1:", len(yoda_dialogues_book1))
+  return yoda_dialogues_book1
+
 
 #second book
-reader = PdfReader(folder_path+ "/books/MATTHEW STOVER - Star Wars, Episode III - Revenge of the Sith-LucasBooks (2005).pdf")
-first_dialogues=[]
-for i in range (len(reader.pages)):
+def read_revenge_of_the_sith(data_folder_path):
+  reader = PdfReader(data_folder_path+ "/books/MATTHEW STOVER - Star Wars, Episode III - Revenge of the Sith-LucasBooks (2005).pdf")
+  first_dialogues=[]
+  for i in range (len(reader.pages)):
     first_dialogues=first_dialogues + re.findall(r'\bYoda\b.*?"(.*?)"', reader.pages[i].extract_text().replace("\n",""))
     yoda_dialogues_book2=first_dialogues + [dialogue for dialogue in re.findall(r'"(.*?)".*?\bYoda\b', reader.pages[i].extract_text().replace("\n","")) 
                                                  if dialogue not in first_dialogues]
-yoda_dialogues_book2= list(filter(lambda s: s.strip(), yoda_dialogues_book2))
-print(len(yoda_dialogues_book2))
+  yoda_dialogues_book2= list(filter(lambda s: s.strip(), yoda_dialogues_book2))
+  print("Number of sentences from book2:", len(yoda_dialogues_book2))
+  return yoda_dialogues_book2
 
-#Famous quotes (was meant to be scrapped directly on websites: to improve)
-quotes=[
+# #### 3. Quotes from the internet
+
+def yodas_quotes():
+  quotes=[
 "Fear is the path to the dark side. Fear leads to anger. Anger leads to hate. Hate leads to suffering.",
 "Once you start down the dark path, forever will it dominate your destiny. Consume you, it will.",
 "Always pass on what you have learned.",
@@ -201,13 +213,86 @@ quotes=[
  "Will he finish what he begins?", "Wake up.", "Poking you with a stick, I am.",
  "What use saving the galaxy is if so much hurt and pain one must cause? The Jedi way that is not. No. Hurt you I won't. Trust you I will, trust you…and the Force. The Jedi way that is. Be good to speak again it will.",
  "Mmm. Friends you have there.", "It is the future you see.","The future... Will they die?", "Difficult to say. Always in motion is the future."
-]
-print(len(quotes))
+"It is the spontaneity that you find so easily which others do not, that is what sets you apart.",
+"A flaw more and more common among Jedi. Too sure of themselves they are. Even the older, more experienced ones.",
+"Blind we are, of creation of this clone army we could not see.",
+"Doubt in battle, there cannot be. Belief, there must be.",
+"No greater gift there is, than a generous heart.",
+"If in anger you answer, then in shame you dwell.",
+"Arduous is discovering oneself, going on the greatest exploration it is.",
+"Many of the truths that we cling to depend on our point of view.",
+"Patience you must have my young Padawan.",
+"You think Yoda stops teaching, just because his student does not want to hear? A teacher Yoda is. Yoda teaches like drunkards drink, like killers kill.",
+"If no mistake you have made, losing you are. A different game you should play.",
+"Your path you must decide.",
+"Hard to see the dark side is.",
+"Always two there are, no more, no less. A master and an apprentice.",
+"Clear, your mind must be, if you are to discover the real villains behind this plot.",
+"To answer power with power, the Jedi way this is not. In this war, a danger there is, of losing who we are.",
+"In the end, cowards are those who follow the dark side.",
+"On many long journeys have I gone. And waited, too, for others to return from journeys of their own. Some return; some are broken; some come back so different only their names remain.",
+"To be Jedi is to face the truth and choose. Give off light, or darkness, Padawan. Be a candle, or the night.",
+"The dark side clouds everything. Impossible to see, the future is.",
+"Feel the Force!"
+"Powerful you have become. The dark side I sense in you.",
+"Death is a natural part of life. Rejoice for those around you who transform into the Force. Mourn them do not. Miss them do not.",
+"In a dark place we find ourselves, and a little more knowledge lights our way.",
+"Much to learn you still have.",
+"Attachment leads to jealousy. The shadow of greed, that is.",
+"Named must your fear be before banish it you can.",
+"Truly wonderful, the mind of a child is.",
+"Anger, fear, aggression. The dark side are they.",
+"Fear is the path to the dark side.",
+"No, no, no. Quicker, easier, more seductive.",
+"Train yourself to let go of everything you are afraid to lose.",
+"A Jedi uses the Force for knowledge and defense, never for attack.",
+"So certain are you? Always with you what cannot be done. Hear you nothing that I say?"
+"A Jedi's strength flows from the Force.",
+"I can’t teach him. The boy has no patience.",
+"Fear leads to anger. Anger leads to hate. Hate leads to suffering.",
+"Smaller in number are we, but larger in mind.",
+"Pass on what you have learned. Strength. Mastery. But weakness, folly, failure also. Yes, failure most of all.",
+"You must unlearn what you have learned.",
+"The greatest teacher, failure is.",
+"When you look at the dark side, careful you must be. For the dark side looks back.",
+"To a dark place this line of thought will carry us. Hmm. Great care we must take.",
+"A way, there always is.", 
+"You will find only what you bring in.",
+"Always in motion, is the future.",
+"...we are what they grow beyond. That is the true burden of all masters.",
+"Once you start down the dark path, forever will it dominate your destiny. Consume you, it will.",
+"Size matters not. Look at me. Judge me by my size, do you?",
+"All his life has he looked away…to the future, to the horizon. Never his mind on where he was. Hmm? What he was doing. Hmph. Adventure. Heh. Excitement. Heh. A Jedi craves not these things.",
+"Soon will I rest, yes, forever sleep. Earned it I have. Twilight is upon me, soon night must fall.",
+"Control, control, you must learn control!"
+"Ah! A great warrior. Wars not make one great.",
+"Do. Or do not. There is no try."]
+#Delete duplicates
+  quotes=list(set(quotes))
+  print("Number of quotes:", len(quotes))
+  return quotes
+
+# #### 4. Yoda corpus in Kaggle
+
+def load_yoad_corpus(data_folder_path):
+  starwars_corpus=pd.read_csv(data_folder_path+"/yoda-corpus.csv",sep=',')
+  yoda_corpus=starwars_corpus[starwars_corpus["character"]=="YODA"]["text"].tolist()
+  print("NUmber of sentences from corpus:", len(yoda_corpus))
+  return yoda_corpus
 
 # #### Final dataset
 
-yoda_dialogues=list(set(yoda_dialogues_book1+yoda_dialogues_book2+quotes+dialogues["YODA"][1:80]))
-print(len(yoda_dialogues))
+def retrieve_yoda_sentences(data_folder_path):
+   #Assemble everything and delete duplicates
+  yoda_dialogues_book1= read_yoad_dark_rendez_vous(data_folder_path)
+  yoda_dialogues_book2= read_revenge_of_the_sith(data_folder_path)
+  quotes= yodas_quotes()
+  dialogues=extract_from_scrpits(data_folder_path)
+  yoda_corpus=load_yoad_corpus(data_folder_path)
+  yoda_dialogues=list(set(yoda_dialogues_book1+yoda_dialogues_book2+quotes+dialogues["YODA"][1:80]+yoda_corpus))
+  print("Final number of sentences:",len(yoda_dialogues))
+  return yoda_dialogues
 
-
+if __name__ == "__main__":
+  retrieve_yoda_sentences()
 
