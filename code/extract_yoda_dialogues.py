@@ -72,7 +72,7 @@ def extract_from_scrpits(data_folder_path):
 
 # first book
 def read_yoad_dark_rendez_vous(data_folder_path):
-  with open(data_folder_path+ "/books/epdf.pub_yoda-dark-rendezvousd56673c5bd1ecce25ac520457237f52013162.txt", "r", encoding="latin-1") as file:
+  with open(data_folder_path+ "/books/epdf.pub_yoda-dark-rendezvousd56673c5bd1ecce25ac520457237f52013162.txt", "r", encoding="cp1252") as file:
     book_text = file.read()
   first_dialogues=re.findall(r'\bYoda\b.*?"(.*?)"', book_text.replace("\n",""))
   yoda_dialogues_book1=first_dialogues + [dialogue for dialogue in re.findall(r'"(.*?)".*?\bYoda\b', book_text.replace("\n","")) 
