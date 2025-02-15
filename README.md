@@ -24,7 +24,8 @@ Here the dialogues are extracted from:
 ## c. Star wars corpus from Kaggle: 
 https://www.kaggle.com/datasets/stefanocoretta/yoda-speech-corpus?resource=download
 
-Data folder structure:
+## Data folder structure:
+
 │── data/              
 │   ├── books 
 |   |   ├── yoda-dark-rendezvous.txt      
@@ -36,6 +37,7 @@ Data folder structure:
 |   |   ├── 05_the_empire_strikes_back.txt 
 |   |   ├── 06_return_of_the_jedi.txt         
 │   ├── yoda-corpus.csv
+
 ## Execute code
 ```
 python extract_yoda_dialogues.py
