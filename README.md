@@ -26,17 +26,20 @@ https://www.kaggle.com/datasets/stefanocoretta/yoda-speech-corpus?resource=downl
 
 ## Data folder structure:
 
-│── data/              
-│   ├── books 
-|   |   ├── yoda-dark-rendezvous.txt      
-|   |   ├── MATTHEW STOVER - Star Wars, Episode III - Revenge of the Sith-LucasBooks (2005).pdf      
-│   ├── scripts
-|   |   ├── 01_the_phatom_menace.txt 
-|   |   ├── 02_attack_of_the_clones.txt 
-|   |   ├── 03_revenge_of_the_sith.txt
-|   |   ├── 05_the_empire_strikes_back.txt 
-|   |   ├── 06_return_of_the_jedi.txt         
-│   ├── yoda-corpus.csv
+data/                
+│── books/                        # Collection of books related to Star Wars
+│   ├── yoda-dark-rendezvous.txt   # Yoda-focused novel in plain text
+│   ├── MATTHEW STOVER - Star Wars, Episode III - Revenge of the Sith-LucasBooks (2005).pdf  # Full book in PDF
+│
+│── scripts/                       # Scripts from various Star Wars movies
+│   ├── 01_the_phantom_menace.txt  
+│   ├── 02_attack_of_the_clones.txt  
+│   ├── 03_revenge_of_the_sith.txt  
+│   ├── 05_the_empire_strikes_back.txt  
+│   ├── 06_return_of_the_jedi.txt  
+│
+│── yoda-corpus.csv                # Processed corpus of Yoda-related dialogues/data
+
 
 ## Execute code
 ```
